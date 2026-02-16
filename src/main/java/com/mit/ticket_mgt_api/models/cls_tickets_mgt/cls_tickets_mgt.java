@@ -39,13 +39,63 @@ public class cls_tickets_mgt {
 
 	public String get_user_org_dashboard_data(String json_request) {
 		String result = null;
-		String SQL = "SELECT * FROM tickets_mgt.get_user_org_dashboard_data_fixed(?::json)";
+		String SQL = "SELECT * FROM tickets_mgt.get_user_org_dashboard_data(?::json)";
 		Connection conn = con;
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 			pstmt.setString(1, json_request);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				result = rs.getString("get_user_org_dashboard_data_fixed");
+				result = rs.getString("get_user_org_dashboard_data");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	public String get_system_dashboard_data(String json_request) {
+		String result = null;
+		String SQL = "SELECT * FROM tickets_mgt.get_system_dashboard_data(?::json ->> 'start_date', ?::json ->> 'end_date')";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, json_request);
+			pstmt.setString(2, json_request);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_system_dashboard_data");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	public String get_tickets_list_for_dashboard(String json_request) {
+		String result = null;
+		String SQL = "SELECT * FROM tickets_mgt.get_tickets_list_for_dashboard(?::json ->> 'start_date', ?::json ->> 'end_date')";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, json_request);
+			pstmt.setString(2, json_request);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_tickets_list_for_dashboard");
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -574,6 +624,30 @@ public class cls_tickets_mgt {
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				result = rs.getString("get_org_archived_tasks");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	public String fetch_archived_tickets(String json_request) {
+		String result = null;
+		String SQL = "SELECT * FROM tickets_mgt.fetch_archived_tickets(?::json)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, json_request);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("fetch_archived_tickets");
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

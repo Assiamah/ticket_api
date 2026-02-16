@@ -32,129 +32,113 @@ public class ApiKeyRequestFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-                HttpServletRequest req = (HttpServletRequest) request;
-                String path = req.getRequestURI();
-                String request_url = req.getRequestURI();
-                String protocol = req.getProtocol();
-                String path_info = req.getPathInfo();
-                String ip_address = req.getRemoteAddr();
-                String ip_address_new = req.getLocalAddr();
-        
-               //  byte[] requestBody = StreamUtils.copyToByteArray(request.getInputStream());
-             //   log.info("request body = {}", new String(requestBody, StandardCharsets.UTF_8));
-              //  String ip_address_new = req.();
-        
-               // String rdate = req.getQueryString();
-        
-        
-                 System.out.println("Path");
-                System.out.println(path);
-        
-                System.out.println("ip_address");
-                System.out.println(ip_address);
-        
-                System.out.println("ip_address_new");
-                //System.out.println(request.getInputStream().read());
-                
-        
-               // System.out.println(new String(requestBody, StandardCharsets.UTF_8));
-                
-                
-               // System.out.println(rdate);
-               ///System.out.println(protocol);
-               // System.out.println(path_info);
-               // System.out.println(ip_address);
-        
-        
-                String key = req.getHeader("x-api-key");
-              //  String key = req.getHeader("x-api-key") == null ? "" : req.getHeader("x-api-key");
-                System.out.println(req.getHeader("x-api-key"));
-        
-           try {
-            
-                      JSONObject request_log = new JSONObject();
-                    request_log.put("al_name", "al_name");
-                    request_log.put("al_token", key);
-                    request_log.put("al_ip_address", ip_address);
-                  
-              
-                    request_log.put("al_api_requested_url", path);
-                    request_log.put("al_api_requested_data", path);
-                   // request_log.put("al_api_requested_data", new String(requestBody, StandardCharsets.UTF_8));
-                          
-                System.out.println(req);
-                if (key != null && ip_address != null) {
-                    // check api key check in the database
-                          String api_key_from_db = "";
-                    // System.out.println(result);
-                
-                   
-                   
-                  
-         try {
-        
+        HttpServletRequest req = (HttpServletRequest) request;
+        String path = req.getRequestURI();
+        String ip_address = req.getRemoteAddr();
+
+        System.out.println("Path");
+        System.out.println(path);
+
+        System.out.println("ip_address");
+        System.out.println(ip_address);
+
+        String key = req.getHeader("x-api-key");
+        System.out.println(req.getHeader("x-api-key"));
+
+        try {
+
+            JSONObject request_log = new JSONObject();
+            request_log.put("al_name", "al_name");
+            request_log.put("al_token", key);
+            request_log.put("al_ip_address", ip_address);
+
+            request_log.put("al_api_requested_url", path);
+            request_log.put("al_api_requested_data", path);
+
+            System.out.println(req);
+            if (key != null && ip_address != null) {
+                // check api key check in the database
+                String api_key_from_db = "";
+
+                try {
+
                     JSONObject request_json = new JSONObject();
                     request_json.put("api_key", key);
                     request_json.put("ip_address", ip_address);
-           System.out.println("request_json.toString()");
-            System.out.println(request_json.toString());
-                  
-                  api_key_service.con = cls_db_config.getCon();
-                    String result = api_key_service.check_api_key_exist(request_json.toString());
-        
-             System.out.println(result);
-                   
+                    System.out.println("request_json.toString()");
+                    System.out.println(request_json.toString());
+
+                    // api_key_service.con = cls_db_config.getCon();
+                    try (java.sql.Connection conn = cls_db_config.getCon()) {
+                        api_key_service.con = conn;
+                        String result = api_key_service.check_api_key_exist(request_json.toString());
+
+                        System.out.println(result);
+
                         JSONObject api_key_obj = new JSONObject(result);
                         String api_key_data = api_key_obj.get("data").toString();
                         JSONObject api_key_obj_data = new JSONObject(api_key_data);
                         api_key_from_db = api_key_obj_data.get("token").toString();
-        
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (key.equals(api_key_from_db)) {
+                    // System.out.println("API Is valid");
+                    request_log.put("al_api_status", "Success");
+                    request_log.put("al_is_valid", 1);
+                    try (java.sql.Connection conn = cls_db_config.getCon()) {
+                        api_key_service.con = conn;
+                        String result = api_key_service.check_api_logs(request_log.toString());
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-        
-                    if (key.equals(api_key_from_db)) {
-                        // System.out.println("API Is valid");
-                        request_log.put("al_api_status", "Success");
-                        request_log.put("al_is_valid", 1);
-                        api_key_service.con = cls_db_config.getCon();
-                        String result = api_key_service.check_api_logs(request_log.toString());
-                        chain.doFilter(request, response);
-                    } else {
-                        // chain.doFilter(request, response);
-                        request_log.put("al_api_status", "Failed");
-                        request_log.put("al_is_valid", 0);
-                        api_key_service.con = cls_db_config.getCon();
-                        String result = api_key_service.check_api_logs(request_log.toString());
-        
-                        HttpServletResponse resp = (HttpServletResponse) response;
-                        String error = "Invalid API KEY";
-                        // System.out.println("Start Validata");
-                        resp.reset();
-                        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.setContentLength(error.length());
-                        response.getWriter().write(error);
-                    }
-        
+                    chain.doFilter(request, response);
                 } else {
-                    
+                    // chain.doFilter(request, response);
                     request_log.put("al_api_status", "Failed");
                     request_log.put("al_is_valid", 0);
-                    api_key_service.con = cls_db_config.getCon();
-                    String result = api_key_service.check_api_logs(request_log.toString());
-        
-                    
+                    try (java.sql.Connection conn = cls_db_config.getCon()) {
+                        api_key_service.con = conn;
+                        String result = api_key_service.check_api_logs(request_log.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     HttpServletResponse resp = (HttpServletResponse) response;
                     String error = "Invalid API KEY";
+                    // System.out.println("Start Validata");
                     resp.reset();
                     resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentLength(error.length());
                     response.getWriter().write(error);
                 }
-                 } catch (Exception e) {
+
+            } else {
+
+                request_log.put("al_api_status", "Failed");
+                request_log.put("al_is_valid", 0);
+                try (java.sql.Connection conn = cls_db_config.getCon()) {
+                    api_key_service.con = conn;
+                    String result = api_key_service.check_api_logs(request_log.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                HttpServletResponse resp = (HttpServletResponse) response;
+                String error = "Invalid API KEY";
+                resp.reset();
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentLength(error.length());
+                response.getWriter().write(error);
+            }
+        } catch (Exception e) {
             // TODO: handle exception
-           }
+        }
     }
 
 }

@@ -152,14 +152,14 @@ public class useraccount {
 	public String add_new_user(String json_request) {
 		String result = null;
 		// System.out.println(json_request);
-		String SQL = "SELECT * FROM user_mgt.select_user_account_add(?)";
+		String SQL = "SELECT * FROM users.add_user(?::json)";
 		Connection conn = con;
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 			pstmt.setString(1, json_request);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				// System.out.println(rs.getString("select_user_account_add"));
-				result = rs.getString("select_user_account_add");
+				// System.out.println(rs.getString("add_user"));
+				result = rs.getString("add_user");
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -295,7 +295,6 @@ public class useraccount {
 		return result;
 	}
 
-
 	public String select_user_by_user_id(String json_request) throws JSONException {
 
 		// int id_user = Integer.parseInt(json_request);
@@ -322,9 +321,6 @@ public class useraccount {
 		}
 		return result;
 	}
-
-
-	
 
 	public String load_user_for_login(String json_request) throws JSONException {
 		String result = null;
@@ -411,7 +407,6 @@ public class useraccount {
 		return result;
 	}
 
-
 	public String select_all_dashboard_menu_per_user(String json_request) {
 		String result = null;
 		String SQL = "SELECT * FROM user_mgt.select_all_dashboard_menu_per_user(?)";
@@ -438,7 +433,6 @@ public class useraccount {
 		return result;
 	}
 
-	
 	public String get_all_menu() throws Exception {
 		// user_account.con = cls_db_config.getCon();
 
@@ -491,7 +485,6 @@ public class useraccount {
 
 	public String select_update_user_profile_per_user(String json_request) throws JSONException {
 
-		
 		String result = null;
 
 		String ws_userid = null;
@@ -503,18 +496,18 @@ public class useraccount {
 		JSONObject jsonobject = new JSONObject(json_request);
 		ws_userid = jsonobject.getString("user_id");
 		ws_profile_list = jsonobject.getString("profile_list");
-	//	modified_by = jsonobject.getString("modified_by");
-		//modified_by_id = jsonobject.getString("modified_by_id");
+		// modified_by = jsonobject.getString("modified_by");
+		// modified_by_id = jsonobject.getString("modified_by_id");
 
 		// }
- int id_user = Integer.parseInt(ws_userid);
+		int id_user = Integer.parseInt(ws_userid);
 		String SQL = "SELECT * FROM user_mgt.select_update_user_profile_per_user(?,?)";
 		Connection conn = con;
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 			pstmt.setString(1, ws_profile_list);
 			pstmt.setInt(2, id_user);
-			//pstmt.setString(3, modified_by);
-			//pstmt.setString(4, modified_by_id);
+			// pstmt.setString(3, modified_by);
+			// pstmt.setString(4, modified_by_id);
 
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
@@ -615,7 +608,6 @@ public class useraccount {
 		return result;
 	}
 
-
 	public String office_verify_verification_token(String json_request) {
 		String result = null;
 
@@ -641,6 +633,5 @@ public class useraccount {
 		}
 		return result;
 	}
-
 
 }

@@ -7,7 +7,7 @@ public class api_key_model {
 
     public String check_api_key_exist(String json_request) {
         String result = null;
-        String SQL = "SELECT * FROM user_mgt.check_api_key_exist(?)";
+        String SQL = "SELECT * FROM users.check_api_key_exist(?::json)";
         Connection conn = con;
         try {
 
@@ -33,10 +33,9 @@ public class api_key_model {
         return result;
     }
 
-
     public String check_api_logs(String json_request) {
         String result = null;
-        String SQL = "SELECT * FROM user_mgt.check_api_logs(?)";
+        String SQL = "SELECT * FROM users.check_api_logs(?::json)";
         Connection conn = con;
         try {
 
@@ -46,6 +45,7 @@ public class api_key_model {
             while (rs.next()) {
                 result = rs.getString("check_api_logs");
             }
+            // System.out.println("check_api_logs skipped as function not found");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.err.println(e.getClass().getName() + ": " + e.getMessage());

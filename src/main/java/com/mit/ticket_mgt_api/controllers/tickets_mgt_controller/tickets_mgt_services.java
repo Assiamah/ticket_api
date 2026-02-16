@@ -19,7 +19,7 @@ public class tickets_mgt_services {
 	// cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
 
 	@Autowired
-	 private db_settings cls_db_config;
+	private db_settings cls_db_config;
 
 	// @POST
 	@PostMapping("/select_verify_task_ticket")
@@ -139,11 +139,27 @@ public class tickets_mgt_services {
 		return result;
 	}
 
-	@PostMapping("/get_org_dashboard_analytics")
-	public String get_org_dashboard_analytics(@RequestBody String json_data) throws Exception {
+	@PostMapping("/get_user_org_dashboard_data")
+	public String get_user_org_dashboard_data(@RequestBody String json_data) throws Exception {
 		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
 		cls_tickets_cl.con = cls_db_config.getCon();
-		String result = cls_tickets_cl.get_org_dashboard_analytics(json_data);
+		String result = cls_tickets_cl.get_user_org_dashboard_data(json_data);
+		return result;
+	}
+
+	@PostMapping("/get_system_dashboard_data")
+	public String get_system_dashboard_data(@RequestBody String json_data) throws Exception {
+		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
+		cls_tickets_cl.con = cls_db_config.getCon();
+		String result = cls_tickets_cl.get_system_dashboard_data(json_data);
+		return result;
+	}
+
+	@PostMapping("/get_tickets_list_for_dashboard")
+	public String get_tickets_list_for_dashboard(@RequestBody String json_data) throws Exception {
+		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
+		cls_tickets_cl.con = cls_db_config.getCon();
+		String result = cls_tickets_cl.get_tickets_list_for_dashboard(json_data);
 		return result;
 	}
 
@@ -331,6 +347,14 @@ public class tickets_mgt_services {
 		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
 		cls_tickets_cl.con = cls_db_config.getCon();
 		String result = cls_tickets_cl.get_org_archived_tasks(json_data);
+		return result;
+	}
+
+	@PostMapping("/fetch_archived_tickets")
+	public String fetch_archived_tickets(@RequestBody String json_data) throws Exception {
+		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
+		cls_tickets_cl.con = cls_db_config.getCon();
+		String result = cls_tickets_cl.fetch_archived_tickets(json_data);
 		return result;
 	}
 
