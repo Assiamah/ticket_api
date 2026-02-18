@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class cls_tickets_mgt {
 
@@ -28,8 +30,11 @@ public class cls_tickets_mgt {
 		} finally {
 			if (conn != null) {
 				try {
+
 					conn.close();
-				} catch (SQLException ex) {
+				} catch (
+
+				SQLException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -617,10 +622,40 @@ public class cls_tickets_mgt {
 
 	public String get_org_archived_tasks(String json_request) {
 		String result = null;
-		String SQL = "SELECT * FROM tickets_mgt.get_org_archived_tasks(?::json)";
+		String SQL = "SELECT * FROM tickets_mgt.get_org_archived_tasks(?, ?, ?)";
 		Connection conn = con;
+		java.util.UUID orgId = null;
+		Integer limit = 50;
+		Integer offset = 0;
+
+		try {
+			com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+			java.util.Map params = mapper.readValue(json_request, java.util.Map.class);
+
+			Object orgIdObj = params.get("p_org_id");
+			if (orgIdObj != null) {
+				orgId = java.util.UUID.fromString(String.valueOf(orgIdObj));
+			}
+
+			Object limitObj = params.get("p_limit");
+			if (limitObj != null) {
+				limit = Integer.valueOf(String.valueOf(limitObj));
+			}
+
+			Object offsetObj = params.get("p_offset");
+			if (offsetObj != null) {
+				offset = Integer.valueOf(String.valueOf(offsetObj));
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error parsing JSON for get_org_archived_tasks: " + e.getMessage());
+			return "{\"success\": false, \"message\": \"Invalid JSON request: " + e.getMessage() + "\"}";
+		}
+
 		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-			pstmt.setString(1, json_request);
+			pstmt.setObject(1, orgId);
+			pstmt.setInt(2, limit);
+			pstmt.setInt(3, offset);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				result = rs.getString("get_org_archived_tasks");
@@ -720,6 +755,31 @@ public class cls_tickets_mgt {
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				result = rs.getString("result");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	public String get_users_for_assignment() {
+		String result = null;
+		String SQL = "SELECT * FROM tickets_mgt.get_users_for_assignment()";
+		Connection conn = con;
+
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_users_for_assignment");
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

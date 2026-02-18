@@ -382,6 +382,14 @@ public class tickets_mgt_services {
 		return result;
 	}
 
+	@PostMapping("/get_users_for_assignment")
+	public String get_users_for_assignment(@RequestBody(required = false) String json_data) throws Exception {
+		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
+		cls_tickets_cl.con = cls_db_config.getCon();
+		String result = cls_tickets_cl.get_users_for_assignment();
+		return result;
+	}
+
 	@PostMapping("/get_user_assigned_jobs")
 	public String get_user_assigned_jobs(@RequestBody String json_data) throws Exception {
 		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
