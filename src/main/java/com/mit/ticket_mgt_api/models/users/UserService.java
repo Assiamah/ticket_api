@@ -197,7 +197,65 @@ public class UserService {
 
 
 
-	    public String getUserSelect() throws Exception {
+	        public String setForcePasswordChange(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM users.set_force_password_change(?::json)";
+        Connection conn = con;
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, jsonReq);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result = rs.getString("set_force_password_change");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
+
+    public String setDefaultPassword(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM users.set_default_password(?::json)";
+        Connection conn = con;
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, jsonReq);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result = rs.getString("set_default_password");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
+
+    public String getUserSelect() throws Exception {
         if (con == null) {
             throw new Exception("Database connection is not established");
         }
@@ -222,3 +280,4 @@ public class UserService {
     }
 
 }
+

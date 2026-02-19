@@ -390,6 +390,15 @@ public class tickets_mgt_services {
 		return result;
 	}
 
+	@PostMapping("/get_my_assigned_tasks")
+	public String get_my_assigned_tasks(@RequestBody(required = false) String json_data) throws Exception {
+		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();
+		cls_tickets_cl.con = cls_db_config.getCon();
+		String payload = (json_data == null || json_data.isEmpty()) ? "{}" : json_data;
+		String result = cls_tickets_cl.get_my_assigned_tasks(payload);
+		return result;
+	}
+
 	@PostMapping("/get_user_assigned_jobs")
 	public String get_user_assigned_jobs(@RequestBody String json_data) throws Exception {
 		cls_tickets_mgt cls_tickets_cl = new cls_tickets_mgt();

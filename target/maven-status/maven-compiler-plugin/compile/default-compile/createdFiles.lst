@@ -13,6 +13,7 @@ com\mit\ticket_mgt_api\controllers\PdfRequest.class
 com\mit\ticket_mgt_api\models\document_upload\cls_document_upload.class
 com\mit\ticket_mgt_api\controllers\document_upload.class
 com\mit\ticket_mgt_api\controllers\CompatTicketsController.class
+com\mit\ticket_mgt_api\controllers\security_controller\SecurityController.class
 com\mit\ticket_mgt_api\controllers\user_management_service.class
 com\mit\ticket_mgt_api\controllers\ProductController.class
 com\mit\ticket_mgt_api\controllers\sms_service.class

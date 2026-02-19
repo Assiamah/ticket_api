@@ -770,6 +770,31 @@ public class cls_tickets_mgt {
 		return result;
 	}
 
+	public String get_my_assigned_tasks(String json_request) {
+		String result = null;
+		String SQL = "SELECT * FROM tickets_mgt.get_my_assigned_tasks(?::json)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			String payload = (json_request == null || json_request.isEmpty()) ? "{}" : json_request;
+			pstmt.setString(1, payload);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_my_assigned_tasks");
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
 	public String get_users_for_assignment() {
 		String result = null;
 		String SQL = "SELECT * FROM tickets_mgt.get_users_for_assignment()";
