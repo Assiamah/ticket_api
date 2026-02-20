@@ -13,7 +13,7 @@ public class SecurityController {
     @Autowired
     private db_settings cls_db_config;
 
-    @PostMapping("/set_force_password_change")
+    @PostMapping("/security/set_force_password_change")
     public String setForcePasswordChange(@RequestBody String json_data) throws Exception {
         auth_service_model auth_service = new auth_service_model();
         auth_service.con = cls_db_config.getCon();
@@ -22,7 +22,7 @@ public class SecurityController {
         return result;
     }
 
-    @PostMapping("/set_default_password")
+    @PostMapping("/security/set_default_password")
     public String setDefaultPassword(@RequestBody String json_data) throws Exception {
         auth_service_model auth_service = new auth_service_model();
         auth_service.con = cls_db_config.getCon();

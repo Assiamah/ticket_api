@@ -114,7 +114,8 @@ public class auth_service_model {
 
     public String resetPasswordWithDefault(String json_request) {
         String result = null;
-        String SQL = "SELECT * FROM security.reset_password_with_default(?::uuid, ?, ?, ?)";
+        // Change to single JSON parameter
+        String SQL = "SELECT * FROM security.reset_password_with_default(?::json)";
         Connection conn = con;
 
         if (conn == null) {
@@ -125,15 +126,9 @@ public class auth_service_model {
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             JSONObject json = new JSONObject(json_request);
-            String userId = json.getString("user_id");
-            String defaultPassword = json.getString("default_password");
-            String newPassword = json.getString("new_password");
-            String confirmPassword = json.getString("confirm_password");
 
-            pstmt.setObject(1, java.util.UUID.fromString(userId));
-            pstmt.setString(2, defaultPassword);
-            pstmt.setString(3, newPassword);
-            pstmt.setString(4, confirmPassword);
+            // Pass the entire JSON string as one parameter
+            pstmt.setString(1, json_request); // Pass the whole JSON string
 
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -154,6 +149,50 @@ public class auth_service_model {
         }
         return result;
     }
+
+    // public String resetPasswordWithDefault(String json_request) {
+    // String result = null;
+    // String SQL = "SELECT * FROM security.reset_password_with_default(?::uuid, ?,
+    // ?, ?)";
+    // Connection conn = con;
+
+    // if (conn == null) {
+    // System.out.println("Database connection is null. Cannot execute query.");
+    // return "{\"status\":\"error\", \"message\":\"Database connection failed\"}";
+    // }
+
+    // try {
+    // PreparedStatement pstmt = conn.prepareStatement(SQL);
+    // JSONObject json = new JSONObject(json_request);
+    // String userId = json.getString("user_id");
+    // String defaultPassword = json.getString("default_password");
+    // String newPassword = json.getString("new_password");
+    // String confirmPassword = json.getString("confirm_password");
+
+    // pstmt.setObject(1, java.util.UUID.fromString(userId));
+    // pstmt.setString(2, defaultPassword);
+    // pstmt.setString(3, newPassword);
+    // pstmt.setString(4, confirmPassword);
+
+    // ResultSet rs = pstmt.executeQuery();
+    // while (rs.next()) {
+    // result = rs.getString("reset_password_with_default");
+    // }
+    // } catch (SQLException e) {
+    // System.out.println(e.getMessage());
+    // } catch (org.codehaus.jettison.json.JSONException e) {
+    // System.out.println("JSON Parsing Error: " + e.getMessage());
+    // } finally {
+    // if (conn != null) {
+    // try {
+    // conn.close();
+    // } catch (SQLException ex) {
+    // ex.printStackTrace();
+    // }
+    // }
+    // }
+    // return result;
+    // }
 
     public String changePassword(String json_request) {
         String result = null;
